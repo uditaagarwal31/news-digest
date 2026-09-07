@@ -3,7 +3,7 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 import datetime
-from sqlalchemy import create_engine, Text, DateTime
+from sqlalchemy import create_engine, Text, DateTime, UniqueConstraint
 
 engine = create_engine("sqlite:///news.db", echo=True)
 
@@ -15,6 +15,7 @@ class Base(DeclarativeBase):
 # an example mapping using the base
 class Article(Base):
     __tablename__ = "article"
+    _table_args__ = (UniqueConstraint("url"),)
 
     article_id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(255))
@@ -22,7 +23,7 @@ class Article(Base):
     source: Mapped[str] = mapped_column(String(255))
     published_date: Mapped[datetime.date] = mapped_column(DateTime)
     content: Mapped[str] = mapped_column(Text)
-    summary: Mapped[str] = mapped_column(Text)
+    #summary: Mapped[str] = mapped_column(Text)
 
 
 class User(Base):

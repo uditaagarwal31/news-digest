@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from newsapi import NewsApiClient
 import json
+from sqlalchemy.orm import Session
 
 load_dotenv()  # reads .env and loads its variables into the environment
 
@@ -25,3 +26,5 @@ top_headlines_response = newsapi.get_top_headlines(
 
 for article in top_headlines_response["articles"]:
     print(article["title"], article["content"], article["url"])
+
+
