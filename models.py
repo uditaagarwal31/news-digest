@@ -18,11 +18,11 @@ class Article(Base):
     _table_args__ = (UniqueConstraint("url"),)
 
     article_id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[str] = mapped_column(String(255))
+    title: Mapped[str] = mapped_column(Text)
     url: Mapped[str] = mapped_column(String(255))
     source: Mapped[str] = mapped_column(String(255))
     published_date: Mapped[datetime.date] = mapped_column(DateTime)
-    content: Mapped[str] = mapped_column(Text)
+    content: Mapped[str] = mapped_column(Text, nullable=True)
     #summary: Mapped[str] = mapped_column(Text)
 
 

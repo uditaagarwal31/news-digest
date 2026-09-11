@@ -23,8 +23,22 @@ top_headlines_response = newsapi.get_top_headlines(
     country='us'
 )
 
+#print(top_headlines_response["articles"][0])
 
 for article in top_headlines_response["articles"]:
     print(article["title"], article["content"], article["url"])
+
+#   article_id: auto increment
+#    title: Mapped[str] = title
+#    url: Mapped[str] = url
+#    source: Mapped[str] = source["name"]
+#    published_date: publishedAt
+#    content: Mapped[str] = content
+
+# print(top_headlines_response["articles"][0]["title"])
+# print(top_headlines_response["articles"][0]["url"])
+# print(top_headlines_response["articles"][0]["source"]["name"])
+# print(top_headlines_response["articles"][0]["publishedAt"])
+# print(top_headlines_response["articles"][0]["content"])
 
 
