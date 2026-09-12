@@ -1,0 +1,51 @@
+import os
+from dotenv import load_dotenv
+from newsapi import NewsApiClient
+from sqlalchemy.orm import Session
+from sqlalchemy import select, func
+from app.models import engine, Article
+from datetime import datetime
+
+
+def fetch_articles(countries, categories):
+    load_dotenv()  # reads .env and loads its variables into the environment
+
+    newsapi = NewsApiClient(os.getenv("NEWSAPI_KEY"))
+
+    for current_country in countries:
+        for current_category in categories:
+            top_headlines_response = newsapi.get_top_headlines(
+                category=current_category,
+                language='en',
+                country=current_country
+            )
+            store_articles(top_headlines_response)
+
+
+
+
+
+def store_articles(top_headlines_response):
+    with Session(engine) as session:
+        for article in top_headlines_response["articles"]:
+            new_article = Article(
+                title=article["title"],
+                url=article["url"],
+                source=article["source"]["name"],
+                published_date=datetime.fromisoformat(article["publishedAt"]),
+                content=article["content"]
+            )
+            session.add(new_article)
+
+        session.commit()
+
+    with Session(engine) as session:
+        count = session.scalar(select(func.count()).select_from(Article))
+        print(f"Total articles inserted in db: {count}")
+
+
+
+
+if __name__ == "__main__":
+    print("main function is here!")
+    

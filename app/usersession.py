@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select, func
-from models import engine, Article
+from app.models import engine, Article
 from datetime import datetime
-from fetch_news import top_headlines_response
+from app.fetch_news import top_headlines_response
 
 # with Session(engine) as session:
 #     new_article = Article(
