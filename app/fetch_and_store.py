@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select, func
 from app.models import engine, Article
 from datetime import datetime
-
+from sqlalchemy.exc import IntegrityError
 
 def fetch_articles(countries, categories):
     load_dotenv()  # reads .env and loads its variables into the environment
@@ -33,8 +33,11 @@ def store_articles(top_headlines_response):
                 content=article["content"]
             )
             session.add(new_article)
-
-        session.commit()
+            try:
+                session.commit()
+            except IntegrityError:
+                session.rollback()
+                print(f"Skipped duplicate: {article['title']}")
 
     with Session(engine) as session:
         count = session.scalar(select(func.count()).select_from(Article))

@@ -8,7 +8,7 @@ def dedup_articles(articles):
     for article in articles: #checks if an article is similiar to an article in the dict
         for group in total_groups:
             for existing_article in group:
-                if fuzz.token_sort_ratio(article.title, existing_article.title) > 80:
+                if fuzz.token_sort_ratio(article.title, existing_article.title) > 50:
                     group.append(article) # if match is found for similarity, the article is added to that group
                     match_found = True
                     print("match found!")

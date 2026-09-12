@@ -15,7 +15,7 @@ class Base(DeclarativeBase):
 # an example mapping using the base
 class Article(Base):
     __tablename__ = "article"
-    _table_args__ = (UniqueConstraint("url"),)
+    __table_args__ = (UniqueConstraint("url"),)
 
     article_id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(Text)
