@@ -22,9 +22,6 @@ def fetch_articles(countries, categories):
             store_articles(top_headlines_response)
 
 
-
-
-
 def store_articles(top_headlines_response):
     with Session(engine) as session:
         for article in top_headlines_response["articles"]:
@@ -44,6 +41,12 @@ def store_articles(top_headlines_response):
         print(f"Total articles inserted in db: {count}")
 
 
+def get_all_articles_from_db():
+    with Session(engine) as session:
+        statement = select(Article)
+        all_articles = session.scalars(statement).all()
+        print("Total articles returned from db", len(all_articles))
+    return all_articles
 
 
 if __name__ == "__main__":
