@@ -7,6 +7,8 @@ from app.models import engine, Article
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
 
+# api key 353b18c04a434382a6735f887b917e35
+# arya ba8f03f6905c4da09053621aef023d3f
 def fetch_articles(countries, categories):
     load_dotenv()  # reads .env and loads its variables into the environment
 
