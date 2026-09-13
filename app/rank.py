@@ -24,3 +24,14 @@ def dedup_articles(articles):
 
     print("length of total groups", len(total_groups))
     return total_groups
+
+
+def rank_and_limit(total_groups, limit=7):
+    sorted_groups = sorted(total_groups, key=score_group, reverse=True)
+    top_groups = sorted_groups[:limit]
+    top_articles = [group[0] for group in top_groups]
+    return top_articles
+
+
+def score_group(group):
+    return len(group)
