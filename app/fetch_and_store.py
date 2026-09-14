@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from newsapi import NewsApiClient
 from sqlalchemy.orm import Session
 from sqlalchemy import select, func
-from app.models import engine, Article
+from app.models import engine, Article, User
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
 
@@ -52,6 +52,19 @@ def get_all_articles_from_db():
         all_articles = session.scalars(statement).all()
         print("Total articles returned from db", len(all_articles))
     return all_articles
+
+
+def get_saved_preferences():
+    with Session(engine) as session:
+        user = session.scalars(select(User)).first()
+
+        if user is None or not user.selected_countries:
+            return None, None
+
+        countries = user.selected_countries.split(",")
+        categories = user.selected_categories.split(",")
+
+        return countries, categories
 
 
 if __name__ == "__main__":
