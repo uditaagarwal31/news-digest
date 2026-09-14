@@ -14,7 +14,13 @@ def fetch_articles(countries, categories):
 
     newsapi = NewsApiClient(os.getenv("NEWSAPI_KEY"))
 
+    # print(type(categories_string))
+    # print(type(countries_string))
+    # countries = countries_string.split(",")
+    # categories = countries_string.split(",")
+    countries = ['us', 'in', 'cn', 'ca']
     for current_country in countries:
+        print(current_country)
         for current_category in categories:
             top_headlines_response = newsapi.get_top_headlines(
                 category=current_category,
