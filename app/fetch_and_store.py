@@ -18,10 +18,9 @@ def fetch_articles(countries, categories):
     # print(type(countries_string))
     # countries = countries_string.split(",")
     # categories = countries_string.split(",")
-    countries = ['us', 'in', 'cn', 'ca']
     for current_country in countries:
-        print(current_country)
         for current_category in categories:
+            print(f"DEBUG: country={current_country}, category={current_category}")
             top_headlines_response = newsapi.get_top_headlines(
                 category=current_category,
                 language='en',
