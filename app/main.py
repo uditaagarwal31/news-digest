@@ -4,10 +4,23 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from app.models import engine, User
 from app.countries import COUNTRIES
-from app.run_digest import run_digest_for_user
+from app.run_digest import run_digest_for_user, run_digest
+from contextlib import asynccontextmanager
+from apscheduler.schedulers.background import BackgroundScheduler
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: runs once when the app starts
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(run_digest, "cron", hour=17, minute=20)
+    scheduler.start()
 
-app = FastAPI()
+    yield  # the app runs here, handling requests, until shutdown
+
+    # Shutdown: runs once when the app stops
+    scheduler.shutdown()
+
+app = FastAPI(lifespan=lifespan)
 
 @app.get("/", response_class=HTMLResponse)
 def show_form():
