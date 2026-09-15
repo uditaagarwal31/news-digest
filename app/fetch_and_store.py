@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from newsapi import NewsApiClient
 from sqlalchemy.orm import Session
 from sqlalchemy import select, func
-from app.models import engine, Article, User
+from app.models import engine, Article, User, UserArticles
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timedelta, timezone
 
@@ -69,6 +69,21 @@ def get_recent_articles_from_db():
         ).all()
         return articles
 
+def get_recent_unsent_articles(user_id):
+    cutoff = datetime.now(timezone.utc) - timedelta(hours=48)
+
+    already_sent_subquery = (
+        select(UserArticles.article_id)
+        .where(UserArticles.user_id == user_id)
+    )
+
+    with Session(engine) as session:
+        articles = session.scalars(
+            select(Article)
+            .where(Article.published_date >= cutoff)
+            .where(Article.article_id.not_in(already_sent_subquery))
+        ).all()
+        return articles
 
 def get_saved_preferences():
     with Session(engine) as session:
