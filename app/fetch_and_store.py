@@ -6,6 +6,8 @@ from sqlalchemy import select, func
 from app.models import engine, Article, User
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
+from datetime import datetime, timedelta, timezone
+
 
 # api key 353b18c04a434382a6735f887b917e35
 # arya ba8f03f6905c4da09053621aef023d3f
@@ -30,6 +32,8 @@ def fetch_articles(countries, categories):
 
 
 def store_articles(top_headlines_response):
+    new_count = 0
+    skipped_count = 0
     with Session(engine) as session:
         for article in top_headlines_response["articles"]:
             new_article = Article(
@@ -42,21 +46,29 @@ def store_articles(top_headlines_response):
             session.add(new_article)
             try:
                 session.commit()
+                new_count += 1
             except IntegrityError:
                 session.rollback()
+                skipped_count += 1
                 print(f"Skipped duplicate: {article['title']}")
-
+        print(f"DEBUG: {new_count} new articles inserted, {skipped_count} duplicates skipped")
     with Session(engine) as session:
         count = session.scalar(select(func.count()).select_from(Article))
         print(f"Total articles inserted in db: {count}")
 
-
-def get_all_articles_from_db():
     with Session(engine) as session:
-        statement = select(Article)
-        all_articles = session.scalars(statement).all()
-        print("Total articles returned from db", len(all_articles))
-    return all_articles
+        total = session.scalar(select(func.count()).select_from(Article))
+        most_recent = session.scalars(select(Article).order_by(Article.published_date.desc())).first()
+        print(f"Total articles in table: {total}")
+        print(f"Most recent published_date: {most_recent.published_date}")
+
+def get_recent_articles_from_db():
+    cutoff = datetime.now(timezone.utc) - timedelta(hours=48)
+    with Session(engine) as session:
+        articles = session.scalars(
+            select(Article).where(Article.published_date >= cutoff)
+        ).all()
+        return articles
 
 
 def get_saved_preferences():
