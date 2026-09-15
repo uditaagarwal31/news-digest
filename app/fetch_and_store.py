@@ -15,13 +15,15 @@ def fetch_articles(countries, categories):
 
     for current_country in countries:
         for current_category in categories:
-            print(f"DEBUG: country={current_country}, category={current_category}")
+           
+            print(f"DEBUG: calling with country={repr(current_country)}, category={repr(current_category)}")
             top_headlines_response = newsapi.get_top_headlines(
                 category=current_category,
                 language='en',
                 country=current_country
             )
             store_articles(top_headlines_response)
+            print("RAW RESPONSE:", top_headlines_response)
 
 
 def store_articles(top_headlines_response):
@@ -51,9 +53,14 @@ def store_articles(top_headlines_response):
 
     with Session(engine) as session:
         total = session.scalar(select(func.count()).select_from(Article))
-        most_recent = session.scalars(select(Article).order_by(Article.published_date.desc())).first()
-        print(f"Total articles in table: {total}")
-        print(f"Most recent published_date: {most_recent.published_date}")
+        most_recent = session.scalars(
+            select(Article).order_by(Article.published_date.desc())
+        ).first()
+
+        if most_recent:
+            print(f"Most recent published_date: {most_recent.published_date}")
+        else:
+            print("No articles in table yet.")
 
 
 def get_recent_articles_from_db():

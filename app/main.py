@@ -4,6 +4,7 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from app.models import engine, User
 from app.countries import COUNTRIES
+from app.run_digest import run_digest_for_user
 
 
 app = FastAPI()
@@ -59,6 +60,36 @@ def show_form():
                 font-weight: 400;
                 color: #999;
                 font-size: 12px;
+            }}
+            .field-group {{
+                margin-top: 20px;
+            }}
+            .field-group label {{
+                display: block;
+                font-weight: 600;
+                font-size: 14px;
+                color: #333;
+                margin-bottom: 6px;
+            }}
+            .field-group input[type="text"] {{
+                width: 100%;
+                box-sizing: border-box;
+                padding: 10px 12px;
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+                font-size: 14px;
+                color: #1a1a1a;
+                transition: border-color 0.15s, box-shadow 0.15s;
+            }}
+            .field-group input[type="text"]:focus {{
+                outline: none;
+                border-color: #2563eb;
+                box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            }}
+            .field-hint {{
+                font-size: 12px;
+                color: #999;
+                margin-top: 4px;
             }}
             .country-list {{
                 max-height: 200px;
@@ -125,9 +156,20 @@ def show_form():
     </head>
     <body>
         <div class="card">
-            <h2>📰 News Digest Preferences</h2>
-            <div class="subtitle">Choose what shows up in your morning digest</div>
+            <h2>📰 News Digest</h2>
+            <div class="subtitle">Sign up or update your preferences</div>
             <form action="/preferences" method="post">
+                <div class="field-group">
+                    <label for="user_name">Your name</label>
+                    <input type="text" id="user_name" name="user_name" placeholder="Your username" required>
+                </div>
+
+                <div class="field-group">
+                    <label for="ntfy_topic">ntfy topic</label>
+                    <input type="text" id="ntfy_topic" name="ntfy_topic" placeholder="your-unique-topic-name" required>
+                    <div class="field-hint">This is your private channel in the ntfy app — pick something only you know.</div>
+                </div>
+
                 <div class="section-label">🌍 Countries <span class="hint">(up to 3)</span></div>
                 <div class="country-list">
                     {country_checkboxes}
@@ -154,18 +196,21 @@ def show_form():
 
 @app.post("/preferences", response_class=HTMLResponse)
 def save_preferences(
+    ntfy_topic: str = Form(...),
+    user_name: str = Form(...),
     countries: list[str] = Form(...),
     categories: list[str] = Form(...),
 ):
     with Session(engine) as session:
-        user = session.query(User).first()
+        #user = session.query(User).first()
+        user = session.query(User).filter(User.ntfy_topic == ntfy_topic).first()
         countries_str = ",".join(countries[:3])
         categories_str = ",".join(categories[:3])
 
         if user is None:
             user = User(
-                user_name="Udita",
-                user_number="local-user",
+                user_name=user_name,
+                ntfy_topic=ntfy_topic,
                 selected_countries=countries_str,
                 selected_categories=categories_str,
             )
@@ -173,8 +218,12 @@ def save_preferences(
         else:
             user.selected_countries = countries_str
             user.selected_categories = categories_str
+            user.ntfy_topic = ntfy_topic
 
         session.commit()
+        session.refresh(user)  # ensures user.user_id is populated for a brand-new row
+
+    run_digest_for_user(user)
 
     countries_display = ", ".join(countries[:3])
     categories_display = ", ".join(categories[:3])
@@ -190,15 +239,17 @@ def save_preferences(
                 justify-content: center;
                 padding: 40px 20px;
                 margin: 0;
+                min-height: 100vh;      
+                align-items: flex-start;   
             }}
             .card {{
                 background: white;
-                border-radius: 12px;
-                box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+                border-radius: 14px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.06);
                 padding: 32px;
-                max-width: 420px;
+                max-width: 460px;
                 width: 100%;
-                text-align: center;
+                height: auto;             
             }}
             .checkmark {{
                 font-size: 48px;

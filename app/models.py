@@ -28,7 +28,7 @@ class User(Base):
     __tablename__ = "user"
     user_id: Mapped[int] = mapped_column(primary_key=True)
     user_name: Mapped[str] = mapped_column(String(255))
-    user_number: Mapped[str] = mapped_column(String(255))
+    ntfy_topic: Mapped[str] = mapped_column(String(255), unique=True)
     selected_countries: Mapped[str] = mapped_column(String(255))
     selected_categories: Mapped[str] = mapped_column(String(255))
 
