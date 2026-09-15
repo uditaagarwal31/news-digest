@@ -12,7 +12,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 async def lifespan(app: FastAPI):
     # Startup: runs once when the app starts
     scheduler = BackgroundScheduler()
-    scheduler.add_job(run_digest, "cron", hour=17, minute=20)
+    scheduler.add_job(run_digest, "cron", hour=7, minute=0)
     scheduler.start()
 
     yield  # the app runs here, handling requests, until shutdown
