@@ -23,8 +23,10 @@ def summarise_article(articles):
     client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
     articles_block = ""
+    articles_titles_block = []
     for i, article in enumerate(articles):
         articles_block += f"{i+1}. Title: {article.title}\nContent: {article.content}\n\n"
+        articles_titles_block.append(article.title)
 
     prompt = f"""Summarize each of these {len(articles)} articles in 2 sentences each, as a text message a user would read. Provide enough context about the article though so that the user can
         make conversation about it.
@@ -51,4 +53,6 @@ def summarise_article(articles):
         cleaned = cleaned.strip() # removes whatever whitespace/newlines is left
         summaries = json.loads(cleaned)
 
-    print(summaries)
+    print(articles_titles_block,summaries)
+
+    return (articles_titles_block,summaries)

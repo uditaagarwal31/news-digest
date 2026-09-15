@@ -2,6 +2,7 @@
 from app.fetch_and_store import fetch_articles, store_articles, get_all_articles_from_db, get_saved_preferences
 from app.rank import dedup_articles, rank_and_limit
 from app.summary import summarise_article
+from app.notification import send_notification
 
 def run_digest():
    # countries = ['us', 'in', 'cn', 'ca']
@@ -17,7 +18,8 @@ def run_digest():
     articles_from_db = get_all_articles_from_db()
     total_groups = dedup_articles(articles_from_db)
     top_results = rank_and_limit(total_groups, limit=7)
-    summarise_article(top_results)
+    articles_titles_block, summaries = summarise_article(top_results)
+    send_notification(articles_titles_block,summaries)
 
 if __name__ == "__main__":
     run_digest()
