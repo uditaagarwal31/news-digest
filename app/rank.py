@@ -1,5 +1,4 @@
 from rapidfuzz import fuzz
-print(fuzz.token_sort_ratio("Anthropic researcher resigns with warning about the dangers of AI development - AP News", "Apple’s new CEO is reviving a Steve Jobs strategy from 25 years ago - TechCrunch"))
 
 def dedup_articles(articles):
     print(len(articles))

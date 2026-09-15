@@ -10,7 +10,6 @@ from datetime import datetime, timedelta, timezone
 
 def send_notification(article_titles, summaries):
     load_dotenv()
-
     message_being_sent = ""
 
     for i, (title, summary) in enumerate(zip(article_titles, summaries), start=1):

@@ -12,11 +12,9 @@ class Base(DeclarativeBase):
     pass
 
 
-# an example mapping using the base
 class Article(Base):
     __tablename__ = "article"
     __table_args__ = (UniqueConstraint("url"),)
-
     article_id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(Text)
     url: Mapped[str] = mapped_column(String(255))
@@ -28,7 +26,6 @@ class Article(Base):
 
 class User(Base):
     __tablename__ = "user"
-    
     user_id: Mapped[int] = mapped_column(primary_key=True)
     user_name: Mapped[str] = mapped_column(String(255))
     user_number: Mapped[str] = mapped_column(String(255))

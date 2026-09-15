@@ -4,20 +4,6 @@ from anthropic import Anthropic
 import json
 
 
-# load_dotenv()
-# client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-
-# response = client.messages.create(
-#     model="claude-haiku-4-5-20251001",
-#     max_tokens=200,
-#     messages=[
-#         {"role": "user", "content": "Summarize this in one sentence: The Federal Reserve raised interest rates by 0.25% on Tuesday, citing persistent inflation concerns."}
-#     ]
-# )
-# print(response.content)
-# #print(response.content[0].text)
-
-
 def summarise_article(articles):
     load_dotenv()
     client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))

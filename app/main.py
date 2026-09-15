@@ -151,6 +151,7 @@ def show_form():
     </html>
     """
 
+
 @app.post("/preferences", response_class=HTMLResponse)
 def save_preferences(
     countries: list[str] = Form(...),
@@ -158,7 +159,6 @@ def save_preferences(
 ):
     with Session(engine) as session:
         user = session.query(User).first()
-
         countries_str = ",".join(countries[:3])
         categories_str = ",".join(categories[:3])
 
@@ -252,21 +252,3 @@ def save_preferences(
     </body>
     </html>
     """
-# from app.fetch_and_store import fetch_articles, store_articles, get_all_articles_from_db
-# from app.rank import dedup_articles, rank_and_limit
-# from app.summary import summarise_article
-
-# countries = ['us', 'in', 'cn', 'ca']
-# categories = ['business', 'entertainment']
-
-# fetch_articles(countries, categories)
-
-# articles_from_db = get_all_articles_from_db()
-
-# total_groups = dedup_articles(articles_from_db)
-
-
-# top_results = rank_and_limit(total_groups, limit=7)
-
-
-# summarise_article(top_results)
