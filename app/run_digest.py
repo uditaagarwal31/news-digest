@@ -2,13 +2,13 @@
 from app.fetch_and_store import fetch_articles, store_articles, get_recent_articles_from_db, get_saved_preferences
 from app.rank import dedup_articles, rank_and_limit
 from app.summary import summarise_article
-from app.notification import send_notification
+from app.notification import send_notification, mark_articles_as_sent
 
 def run_digest():
    # countries = ['us', 'in', 'cn', 'ca']
    # categories = ['business', 'entertainment']
 
-    countries, categories = get_saved_preferences()
+    countries, categories, user = get_saved_preferences()
 
     if not countries or not categories:
         print("No preferences saved yet — visit the form to set them.")
@@ -26,6 +26,8 @@ def run_digest():
     print(f"DEBUG: {len(top_results)} results after rank/limit")
     articles_titles_block, summaries = summarise_article(top_results)
     send_notification(articles_titles_block,summaries)
+    article_ids = [article.article_id for article in top_results]
+    mark_articles_as_sent(user.user_id, article_ids)
 
 if __name__ == "__main__":
     run_digest()

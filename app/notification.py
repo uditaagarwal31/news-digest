@@ -1,6 +1,12 @@
 import os
 import httpx
 from dotenv import load_dotenv
+from sqlalchemy import select, func
+from app.models import engine, UserArticles
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
+from datetime import datetime, timedelta, timezone
+
 
 def send_notification(article_titles, summaries):
     load_dotenv()
@@ -17,3 +23,17 @@ def send_notification(article_titles, summaries):
     }
     httpx.post(f"https://ntfy.sh/{topic}", data=message_being_sent.strip(), headers=headers)
 
+
+def mark_articles_as_sent(user_id, article_ids):
+    with Session(engine) as session:
+        for curr_article_id in article_ids:
+                article_sent = UserArticles(
+                    article_id = curr_article_id,
+                    user_id = user_id,
+                    sent_date = datetime.now(timezone.utc)
+                )
+                session.add(article_sent)
+                try:
+                    session.commit()
+                except IntegrityError:
+                    session.rollback()

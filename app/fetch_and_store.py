@@ -4,7 +4,6 @@ from newsapi import NewsApiClient
 from sqlalchemy.orm import Session
 from sqlalchemy import select, func
 from app.models import engine, Article, User
-from datetime import datetime
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timedelta, timezone
 
@@ -81,7 +80,7 @@ def get_saved_preferences():
         countries = user.selected_countries.split(",")
         categories = user.selected_categories.split(",")
 
-        return countries, categories
+        return countries, categories, user
 
 
 if __name__ == "__main__":
